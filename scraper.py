@@ -54,7 +54,8 @@ class BaseZakazBeerClient:
     def fetch_goods(self, page: int = 1) -> List[dict]:
         params = {"page": page}
         response = self.session.get(self.get_api_url(), params=params)
-        goods = response.json()
+        goods = response.json()["results"]
+        logging.info(f"Отримано {len(goods)} товарів з параметрами: {json.dumps(params, indent=4)}")
         return goods
 
     @classmethod
@@ -63,25 +64,25 @@ class BaseZakazBeerClient:
 
 
 class FurshetBeerClient(BaseZakazBeerClient):
-    store_id = 48215518,
+    store_id = 48215518
     category_name = "beer-furshet"
 
 
 class AuchanBeerClient(BaseZakazBeerClient):
-    store_id = 48246401,
+    store_id = 48246401
     category_name = "beer-auchan"
 
 
 class NovusBeerClient(BaseZakazBeerClient):
-    store_id = 48201070,
+    store_id = 48201070
     category_name = "beer"
 
 
 class MegaMarketBeerClient(BaseZakazBeerClient):
-    store_id = 48267601,
+    store_id = 48267601
     category_name = "beer-megamarket"
 
 
 class MetroBeerClient(BaseZakazBeerClient):
-    store_id = 48215611,
+    store_id = 48215611
     category_name = "beer-metro"
