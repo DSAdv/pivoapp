@@ -3,6 +3,8 @@ import logging
 import requests
 
 from typing import List
+from enum import Enum, auto
+
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 from fake_useragent import UserAgent
@@ -12,11 +14,25 @@ log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 logging.basicConfig(level=log_level, format=log_format)
 
 
+class StoreID(Enum):
+    """  Цей клас дозволяє отримати ключі того чи іншого магазину.
+         Також є можливість скористатись назвою атрибуту, наприклад: StoreID.metro.name
+    """
+    furshet = 0
+    auchan = auto()
+    novus = auto()
+    megamarket = auto()
+    metro = auto()
+
+
 def requests_retry_session(retries: int = 7,
                            backoff_factor: float = 0.2,
                            status_forcelist: tuple = (400, 500, 502, 503, 504),
                            session: requests.Session = None) -> requests.Session:
-
+    """  Метод додає функціональність для повторних спроб під час процесу скрапингу.
+         Використовується як альтернатива request.get. Також перевизначені заголовки дозволяють
+         імітувати поведінку браузера, що дозволяє надійніше виконувати потрібну роботу.
+    """
     session = session or requests.Session()
     retry = Retry(
         total=retries,
