@@ -2,6 +2,7 @@ import json
 import logging
 import requests
 
+from typing import List
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 from fake_useragent import UserAgent
@@ -50,7 +51,7 @@ class BaseZakazBeerClient:
                  retries: int = 7):
         self.session = requests_retry_session(retries=retries, session=session)
 
-    def fetch_goods(self, page: int = 1):
+    def fetch_goods(self, page: int = 1) -> List[dict]:
         params = {"page": page}
         response = self.session.get(self.get_api_url(), params=params)
         goods = response.json()
