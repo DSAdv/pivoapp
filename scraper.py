@@ -1,4 +1,7 @@
 import json
+import pandas as pd
+import datetime
+import pathlib
 import logging
 import requests
 
@@ -74,6 +77,25 @@ class BaseZakazBeerClient:
         logging.info(f"Отримано {len(goods)} товарів з параметрами: {json.dumps(params, indent=4)}")
         return goods
 
+    @staticmethod
+    def process_listing_position(position_data: dict) -> dict:
+        record = position_data.copy()
+
+        keys_for_remove = (
+            "img", "gallery", "bundle", "unit", "currency", "discount", "is_hit",
+            "in_stock", "producer", "custom_ribbons", "fat", "shelf_life", "temperature_range",
+            "pack_amount", "horeca_only", "excisable", "price_wholesale", "restrictions"
+        )
+
+        record["discount_diff"] = record["discount"]["old_price"] - record["price"]
+        record["is_discount"] = bool(record["discount_diff"])
+        record["img_url"] = record["img"]["s1350x1350"]
+
+        for key in keys_for_remove:
+            del record[key]
+
+        return record
+
     @classmethod
     def get_api_url(cls) -> str:
         return f"https://stores-api.zakaz.ua/stores/{cls.store_id}/categories/{cls.category_name}/products"
@@ -102,3 +124,57 @@ class MegaMarketBeerClient(BaseZakazBeerClient):
 class MetroBeerClient(BaseZakazBeerClient):
     store_id = 48215611
     category_name = "beer-metro"
+
+
+class TavriavBeerClient(BaseZakazBeerClient):
+    """Можна використовувати лише в Харкові"""
+    store_id = 48221130
+    category_name = "beer-tavriav"
+
+
+class VostorgBeerClient(BaseZakazBeerClient):
+    """Можна використовувати лише в Харкові"""
+    store_id = 48231001
+    category_name = "beer-vostorg"
+
+
+def parse_beer_data(source_name: str,
+                    source_client_class: BaseZakazBeerClient,
+                    session: requests.Session = None):
+    store_client = source_client_class.__init__(session=session)
+    beer_positions = list()
+    more_flag = True
+    page = 1
+
+    logging.info(f"Починаємо скрапити дані з допомогою {store_client.__class__}...")
+
+    # витягуємо дані через АРІ
+    while more_flag:
+        goods = store_client.fetch_goods(page=page)
+        if goods:
+            beer_positions.extend(goods)
+            page += 1
+        else:
+            break
+
+    logging.info(f"... отримано {len(beer_positions)} позицій з пивом.")
+
+    # записуємо всю інформацію до файлу
+    path = pathlib.Path().cwd() / "data"
+    if not path.is_dir():
+        path.mkdir(parents=True)
+
+    logging.info('Директорія для запису даних готова...')
+
+    csv_path = path / get_filename(source_name=source_name)
+    df = pd.DataFrame([store_client.process_listing_position(position)
+                       for position in beer_positions])
+    df.to_csv(csv_path, index=False)
+
+    logging.info(f"...{df.shape[0]} рядків збережено до файлу {csv_path}")
+    return df
+
+
+def get_filename(source_name: str):
+    now_date = datetime.datetime.now().strftime("%m-%d-%YT%H-%M-%S")
+    return f"{source_name}_{now_date}_beer.csv"

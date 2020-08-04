@@ -8,6 +8,16 @@ bs4 = "*"
 requests = "*"
 jupyterlab = "*"
 fake-useragent = "*"
+gensim = "*"
+tqdm = "*"
+selenium = "*"
+webdriver-manager = "*"
+lxml = "*"
+pandas = "*"
+flask = "*"
+flask-admin = "*"
+flask-sqlalchemy = "*"
+flask-login = "*"
 
 [dev-packages]
 
