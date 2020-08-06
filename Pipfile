@@ -18,6 +18,8 @@ flask = "*"
 flask-admin = "*"
 flask-sqlalchemy = "*"
 flask-login = "*"
+pymongo = "*"
+email-validator = "*"
 
 [dev-packages]
 

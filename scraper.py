@@ -157,22 +157,14 @@ def parse_beer_data(source_name: str,
         else:
             break
 
-    logging.info(f"... отримано {len(beer_positions)} позицій з пивом.")
+    clean_beer_positions = list(map(store_client.process_listing_position, beer_positions))
+    logging.info(f"... отримано {len(clean_beer_positions)} позицій з пивом.")
 
-    # записуємо всю інформацію до файлу
-    path = pathlib.Path().cwd() / "data"
-    if not path.is_dir():
-        path.mkdir(parents=True)
+    df = pd.DataFrame(clean_beer_positions)
+    df["timestamp"] = datetime.datetime.utcnow()
+    df["source"] = source_name
 
-    logging.info('Директорія для запису даних готова...')
-
-    csv_path = path / get_filename(source_name=source_name)
-    df = pd.DataFrame([store_client.process_listing_position(position)
-                       for position in beer_positions])
-    df.to_csv(csv_path, index=False)
-
-    logging.info(f"...{df.shape[0]} рядків збережено до файлу {csv_path}")
-    return df
+    return df[~df.volume.isna()]
 
 
 def get_filename(source_name: str):
