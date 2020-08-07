@@ -20,6 +20,9 @@ flask-sqlalchemy = "*"
 flask-login = "*"
 pymongo = "*"
 email-validator = "*"
+pillow = "*"
+opencv-python = "*"
+matplotlib = "*"
 
 [dev-packages]
 
