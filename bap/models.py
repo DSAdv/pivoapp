@@ -1,6 +1,7 @@
 from datetime import datetime
 from hashlib import md5
 from flask_login import UserMixin
+from sqlalchemy import func, and_
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from bap import db
@@ -60,5 +61,11 @@ class BeerPosition(db.Model):
     img_url = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
+    @classmethod
+    def get_by_date(cls, date: datetime.date, source: str = None):
+        date_condition = func.date(cls.timestamp) == date
+        condition = and_(cls.source == source, date_condition) if source else date_condition
+        return cls.query.filter(condition).all()
+
     def __repr__(self):
-        return '<BeerPosition {}>'.format(self.title)
+        return '<BeerPosition {}:{}>'.format(self.title, self.source)
