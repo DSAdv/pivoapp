@@ -5,7 +5,7 @@ from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import UserMixin, LoginManager, current_user, login_user, logout_user
+from flask_login import LoginManager, current_user
 
 
 from bap.config import BaseConfig
@@ -15,12 +15,9 @@ app.config.from_object(BaseConfig)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
+admin = Admin(app, index_view=AdminIndexView())
 login = LoginManager(app)
 login.login_view = 'login'
-
-admin = Admin(app, index_view=AdminIndexView())
-
 
 from bap import routes, models, errors
 

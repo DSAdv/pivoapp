@@ -6,6 +6,7 @@ from werkzeug.urls import url_parse
 
 from bap import app, db
 from bap.forms import LoginForm, RegistrationForm, EditProfileForm
+from bap.helpers.beer_position import load_for_index_page
 from bap.models import User
 
 
@@ -13,8 +14,10 @@ from bap.models import User
 @app.route("/index")
 @login_required
 def index():
+    beers = load_for_index_page()
     return render_template("index.html",
-                           title="Головна сторінка")
+                           title="Головна сторінка",
+                           beers=beers)
 
 
 @app.route('/login', methods=['GET', 'POST'])

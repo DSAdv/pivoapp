@@ -13,7 +13,7 @@ def print_date_time():
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=parse_beer_positions, trigger="interval", hours=3)
+scheduler.add_job(func=parse_beer_positions, trigger="interval", hours=1)
 scheduler.start()
 
 atexit.register(lambda: scheduler.shutdown())
