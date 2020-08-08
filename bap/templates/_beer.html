@@ -1,6 +1,7 @@
 <div>
     <h3>{{ beer.title }}</h3>
     <p>Мінімальна ціна: {{ beer.min_price }}₴</p>
+    <p>Магазин, де найдешевше: <img src="{{ beer.store_img_url }}" alt=""></p>
     <p>Цінова різниця:
         <ul>
             {% for price_diff in beer.price_difference %}
@@ -11,7 +12,7 @@
     </p>
 
 
-    <p>Магазин: <img src="{{ beer.store_img_url }}" alt=""></p>
+
     <img src="{{ beer.img_url }}" alt="" style="width: 150px; height: 150px">
     <hr>
 </div>
