@@ -42,3 +42,13 @@ def remove_background(img):
     _, thresh = cv2.threshold(cv2.cvtColor(r_img, cv2.COLOR_BGR2GRAY), 0, 35, cv2.THRESH_BINARY)
     r_img[thresh == 0] = (255, 255, 255)
     return img
+
+
+def add_beer_background(img):
+    background = cv2.resize(
+        cv2.imread("images/background5.jpg"),
+        (819, 819),
+        interpolation=cv2.INTER_AREA
+    )
+    added_image = cv2.addWeighted(cv2.cvtColor(background, cv2.COLOR_BGR2RGB), 0.4, img, 0.7, -50)
+    return added_image

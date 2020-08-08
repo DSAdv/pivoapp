@@ -26,6 +26,8 @@ class StoreID(Enum):
     novus = auto()
     megamarket = auto()
     metro = auto()
+    tavriav = auto()
+    vostorg = auto()
 
 
 def requests_retry_session(retries: int = 7,

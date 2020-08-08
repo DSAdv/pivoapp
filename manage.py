@@ -5,13 +5,15 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from bap import app
 from bap import models
+from scrape_periodic import parse_beer_positions
+
 
 def print_date_time():
     print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=print_date_time, trigger="interval", seconds=60)
+scheduler.add_job(func=parse_beer_positions, trigger="interval", minutes=5)
 scheduler.start()
 
 atexit.register(lambda: scheduler.shutdown())
