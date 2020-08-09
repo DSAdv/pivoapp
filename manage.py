@@ -13,6 +13,7 @@ def make_shall_context():
         "db": models.db,
         "User": models.User,
         "Post": models.Post,
+        "BeerPosition": models.BeerPosition,
     }
 
 
@@ -21,7 +22,7 @@ def init_scheduler():
     # ця штука запускалась двічі, тому варто винести в функцію і запускати
     # перед кожним перезавантаженням застосунку на Flask
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=parse_beer_positions, trigger="interval", hours=1)
+    scheduler.add_job(func=parse_beer_positions, trigger="interval", minutes=1)
     scheduler.start()
     # вимикаємо заплановані задачі, якщо застосунок вимкнено
     atexit.register(lambda: scheduler.shutdown())

@@ -23,6 +23,7 @@ email-validator = "*"
 pillow = "*"
 opencv-python = "*"
 matplotlib = "*"
+markdown = "*"
 
 [dev-packages]
 

@@ -3,8 +3,8 @@ import logging
 
 from bap import db
 from bap.models import BeerPosition
-from scraper import StoreID, parse_beer_data
-from scraper import (
+from scraper.zakaz_ua import StoreID, parse_beer_data
+from scraper.zakaz_ua import (
     FurshetBeerClient,
     MegaMarketBeerClient,
     MetroBeerClient,
@@ -45,3 +45,7 @@ def parse_beer_positions():
             logging.info(f"Додано {df.shape[0]} записів до бази даних.")
         else:
             logging.info(f"Дані для {source_name.capitalize()} за {str(date)} вже додано")
+
+
+if __name__ == '__main__':
+    parse_beer_positions()

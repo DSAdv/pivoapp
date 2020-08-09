@@ -1,5 +1,5 @@
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from bap.models import BeerPosition
 
@@ -16,9 +16,13 @@ store_image_dict = {
 
 
 def load_for_index_page():
+    date = datetime.now().date()
     results = BeerPosition.get_by_date(datetime.now().date())
+    if not results:
+        results = BeerPosition.get_by_date(date - timedelta(days=1))
+
     df = pd.DataFrame(map(prepare_record, results))
-    ean_list = get_product_ean_available_in_count(df, threshold=3)
+    ean_list = get_product_ean_available_in_count(df, threshold=4)
 
     agg_df = pd.DataFrame([get_beer_metadata(df, ean) for ean in ean_list]).sort_values(by="min_price")
     return agg_df.to_dict(orient="records")
@@ -40,8 +44,12 @@ def get_beer_metadata(df, ean: str):
 
     price_difference = [{
         "store": store,
-        "diff": (price - min_price_row["price"]) / 100
-    } for price, store in zip(sorted_df.price.values, sorted_df.source.values)]
+        "diff": (price - min_price_row["price"]) / 100,
+        "discount": discount,
+    } for price, store, discount in zip(
+        sorted_df.price.values,
+        sorted_df.source.values,
+        sorted_df.is_discount)]
 
     return {
         "title": min_price_row["title"],

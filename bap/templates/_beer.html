@@ -1,18 +1,22 @@
-<div>
-    <h3>{{ beer.title }}</h3>
-    <p>Мінімальна ціна: {{ beer.min_price }}₴</p>
-    <p>Магазин, де найдешевше: <img src="{{ beer.store_img_url }}" alt=""></p>
-    <p>Цінова різниця:
+<div style="display: flex; align-items: stretch;">
+    <div>
+        <img src="{{ beer.img_url }}" alt="" style="width: 200px; height: 200px">
+    </div>
+    <div>
+        <h3>{{ beer.title }}</h3>
+        <p>Мінімальна ціна: {{ beer.min_price }}₴</p>
+        <p>Магазин, де найдешевше: <img src="{{ beer.store_img_url }}" alt=""></p>
         <ul>
+            Цінова різниця:
             {% for price_diff in beer.price_difference %}
-                <li>Магазин: {{price_diff.store}} -> <em>{{price_diff.diff}}₴</em></li>
+                <li>Магазин: {{price_diff.store}} ->
+                    <em {% if price_diff.discount %} style="color: red;" {%endif%}>
+                        + {{price_diff.diff}}₴
+                    </em>
+                </li>
             {% endfor %}
         </ul>
 
-    </p>
-
-
-
-    <img src="{{ beer.img_url }}" alt="" style="width: 150px; height: 150px">
-    <hr>
+    </div>
 </div>
+<hr>

@@ -143,7 +143,7 @@ class VostorgBeerClient(BaseZakazBeerClient):
 def parse_beer_data(source_name: str,
                     source_client_class: BaseZakazBeerClient,
                     session: requests.Session = None):
-    store_client = source_client_class.__init__(session=session)
+    store_client = source_client_class(session=session)
     beer_positions = list()
     more_flag = True
     page = 1
@@ -163,6 +163,8 @@ def parse_beer_data(source_name: str,
     logging.info(f"... отримано {len(clean_beer_positions)} позицій з пивом.")
 
     df = pd.DataFrame(clean_beer_positions)
+    df["ingredients"] = df["ingredients"].map(json.dumps)
+    df["nutrition_facts"] = df["nutrition_facts"].map(json.dumps)
     df["timestamp"] = datetime.datetime.utcnow()
     df["source"] = source_name
 
